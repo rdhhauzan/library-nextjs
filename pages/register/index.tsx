@@ -47,6 +47,11 @@ export default function Register() {
         console.log("Message:", response);
       })
       .catch(error => {
+        Swal.fire({
+          title: "Register failed",
+          text: error.response.data.message,
+          icon: "error"
+        });
         console.error("Error:", error);
       })
       .finally(() => {

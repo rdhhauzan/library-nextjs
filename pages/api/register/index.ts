@@ -8,6 +8,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const data = req.body;
 
   try {
+    if (!data.username || !data.password) {
+      res.status(403).json({
+        message: "Please fill all the form!"
+      })
+    }
+
     const result = await prisma.user.create({
       data: {
         username: data.username,
@@ -18,8 +24,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json({
       message: "User created successfully.",
     });
-  } catch (err) {
-    console.error(err);
-    res.status(403).json({ err: "Error occurred while adding a new user." });
+  } catch (err: any) {
+    if (err.name == 'PrismaClientKnownRequestError') {
+      res.status(403).json({
+        message: "Username already exists."
+      });
+    }
+    
+    res.status(403).json(err);
   }
 };
