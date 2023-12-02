@@ -1,5 +1,6 @@
 import { useState, useRef, FormEvent } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface FormValues {
   username: string;
@@ -7,17 +8,26 @@ interface FormValues {
 }
 
 interface ApiResponse {
-  data: {
-    message: string;
-  };
+  message: String;
 }
 
 export default function Register() {
   const formRef = useRef<HTMLFormElement>(null);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const register = async (e: FormEvent) => {
+    Swal.fire({
+      title: "Creating users...",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    setLoading(true);
     e.preventDefault();
 
     const formValues: FormValues = {
@@ -26,6 +36,22 @@ export default function Register() {
     };
 
     console.log(formValues);
+
+    axios.post<ApiResponse>("/api/register", formValues)
+      .then(response => {
+        Swal.fire({
+          title: "Success",
+          text: "User created successfully, Please login",
+          icon: "success"
+        });
+        console.log("Message:", response);
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
