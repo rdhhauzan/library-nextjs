@@ -4,10 +4,6 @@ import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../../app/globals.css";
 
-interface ApiResponse {
-  message: string;
-}
-
 interface Book {
   id: number;
   title: string;
@@ -124,10 +120,10 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
   }
 
   return (
-    <div className="container">
-      <p>Show Books with category {category.name}</p>
+    <div className="container mx-auto">
+      <h1 className="my-5 text-center" style={{fontSize: "30px"}}>Show Books with category {category.name}</h1>
       <div>
-        <button onClick={() => router.push('/category')}>Add Category</button>
+        <button onClick={() => router.push('/category')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-3">Add Category</button>
         <br />
         <input
           type="text"
@@ -173,33 +169,33 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
         </select>
-        <button onClick={applyFilters}>Apply Filters</button>
-        <table className="table-auto">
+        <button onClick={applyFilters} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">Apply Filters</button>
+        <table className="table-auto shadow-lg bg-white content-top mt-3 border-collapse" width="100%">
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Image</th>
-              <th>Description</th>
-              <th>Release Year</th>
-              <th>Total Page</th>
-              <th>Thickness</th>
-              <th>Category</th>
-              <th>Action</th>
+              <th className="bg-blue-100 border text-left px-8 py-4">Title</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Image</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Description</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Release Year</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Total Page</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Thickness</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Category</th>
+                <th className="bg-blue-100 border text-left px-8 py-4">Action</th>
             </tr>
           </thead>
           <tbody>
             {category.books.map(book => (
-              <tr key={book.id}>
-                <td>{book.title}</td>
-                <td><img src={book.image_url} alt={book.title} /></td>
-                <td>{book.description}</td>
-                <td>{book.release_year}</td>
-                <td>{book.total_page}</td>
-                <td>{book.thickness}</td>
-                <td>{category.name}</td>
-                <td>
-                    <button onClick={() => editBook(book.id)}>Edit</button>
-                    <button onClick={() => deleteBook(book.id)}>Delete</button>
+              <tr key={book.id} className="hover:bg-gray-50 focus:bg-gray-300">
+                <td className="border px-8 py-4">{book.title}</td>
+                <td className="border px-8 py-4"><img src={book.image_url} alt={book.title} /></td>
+                <td className="border px-8 py-4">{book.description}</td>
+                <td className="border px-8 py-4">{book.release_year}</td>
+                <td className="border px-8 py-4">{book.total_page}</td>
+                <td className="border px-8 py-4">{book.thickness}</td>
+                <td className="border px-8 py-4">{category.name}</td>
+                <td className="border px-8 py-4">
+                    <button onClick={() => editBook(book.id)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded m-3">Edit</button>
+                    <button onClick={() => deleteBook(book.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-3">Delete</button>
                 </td>
               </tr>
             ))}
