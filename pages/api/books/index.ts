@@ -6,12 +6,33 @@ const prisma = new PrismaClient();
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
+      const { title, minYear, maxYear, minPage, maxPage, sortByTitle } = req.query;
+    
       const data = await prisma.book.findMany({
+        where: {
+          title: {
+            contains: title ? String(title) : undefined,
+            mode: 'insensitive',
+          },
+          release_year: {
+            gte: minYear ? parseInt(minYear as string) : undefined,
+            lte: maxYear ? parseInt(maxYear as string) : undefined,
+          },
+          total_page: {
+            gte: minPage ? parseInt(minPage as string) : undefined,
+            lte: maxPage ? parseInt(maxPage as string) : undefined,
+          },
+        },
+        orderBy: sortByTitle
+          ? {
+              title: sortByTitle === 'desc' ? 'desc' : 'asc',
+            }
+          : undefined,
         include: {
           category: true,
         },
       });
-
+    
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
