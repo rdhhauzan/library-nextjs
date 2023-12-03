@@ -1,4 +1,4 @@
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
@@ -17,6 +17,11 @@ interface ApiResponse {
   message: string;
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 export default function AddBook() {
   const formRef = useRef<HTMLFormElement>(null);
   const [title, setTitle] = useState<string>("");
@@ -27,6 +32,7 @@ export default function AddBook() {
   const [totalPage, setTotalPage] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
 
   const addBook = async (e: FormEvent) => {
@@ -74,6 +80,17 @@ export default function AddBook() {
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    axios.get('/api/categories')
+    .then((res) => {
+      setCategories(res.data)
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }, [])
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -189,8 +206,9 @@ export default function AddBook() {
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
                 <option value="" selected disabled>Select Category</option>
-                <option value="1">Category 1</option>
-                <option value="2">Category 2</option>
+                {categories.map((category) => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
               </select>
             </div>
           </div>
