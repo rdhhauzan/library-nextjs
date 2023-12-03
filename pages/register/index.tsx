@@ -44,7 +44,6 @@ export default function Register() {
           text: "User created successfully, Please login",
           icon: "success"
         });
-        console.log("Message:", response);
       })
       .catch(error => {
         Swal.fire({
@@ -52,7 +51,6 @@ export default function Register() {
           text: error.response.data.message,
           icon: "error"
         });
-        console.error("Error:", error);
       })
       .finally(() => {
         setLoading(false);
