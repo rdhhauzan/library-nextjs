@@ -83,6 +83,10 @@ export default function AddBook() {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+      router.push('/login')
+    }
+
     axios.get('/api/categories')
     .then((res) => {
       setCategories(res.data)

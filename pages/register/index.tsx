@@ -1,6 +1,7 @@
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useRouter } from "next/router";
 
 interface FormValues {
   username: string;
@@ -16,6 +17,7 @@ export default function Register() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter()
 
   const register = async (e: FormEvent) => {
     Swal.fire({
@@ -57,10 +59,16 @@ export default function Register() {
       });
   };
 
+  useEffect(() => {
+    if (localStorage.getItem('access_token')) {
+      router.push('/books')
+    }
+  }, [])
+
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Register account</h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -107,6 +115,7 @@ export default function Register() {
             >
               Sign up
             </button>
+            <a onClick={() => router.push('/login')} className="cursor-pointer">Already have an account? Login here</a>
           </div>
         </form>
       </div>

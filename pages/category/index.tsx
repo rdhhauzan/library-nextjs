@@ -1,4 +1,4 @@
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
@@ -57,6 +57,12 @@ export default function AddCategory() {
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+      router.push('/login')
+    }
+  }, [])
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">

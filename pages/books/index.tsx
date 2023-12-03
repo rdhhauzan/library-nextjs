@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "../../app/globals.css";
+import Navbar from "@/components/Navbar";
 
 interface Book {
   id: number;
@@ -95,6 +96,10 @@ export default function Books() {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+      router.push('/login')
+    }
+    
     axios.get("/api/books")
       .then(response => {
         setBooks(response.data);

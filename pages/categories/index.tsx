@@ -53,6 +53,10 @@ export default function Categories() {
   }
 
   useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+        router.push('/login')
+    }
+    
     axios.get("/api/categories")
       .then(response => {
         setCategories(response.data);

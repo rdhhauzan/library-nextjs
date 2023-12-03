@@ -83,6 +83,10 @@ export default function EditBook({ id }: { id: string }) {
     };
 
     useEffect(() => {
+      if (!localStorage.getItem('access_token')) {
+        router.push('/login')
+      }
+
         setLoading(true);
 
         axios.get('/api/categories')

@@ -1,4 +1,4 @@
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
@@ -65,6 +65,12 @@ export default function Login() {
       });
   };
 
+  useEffect(() => {
+    if (localStorage.getItem('access_token')) {
+      router.push('/books')
+    }
+  }, [])
+
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -115,6 +121,7 @@ export default function Login() {
             >
               Sign in
             </button>
+            <a onClick={() => router.push('/register')} className="cursor-pointer">Dont have an account? Register here</a>
           </div>
         </form>
       </div>
