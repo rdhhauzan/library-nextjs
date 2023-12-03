@@ -25,7 +25,7 @@ export default function Books() {
   const router = useRouter();
 
   function editBook(id : number) {
-    console.log(id);
+    router.push(`/book/${id}`);
   }
 
   function deleteBook (id : number) {
