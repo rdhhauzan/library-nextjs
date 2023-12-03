@@ -17,6 +17,11 @@ interface ApiResponse {
     message: string;
 }
 
+interface Category {
+    id: number;
+    name: string;
+}
+
 export default function EditBook({ id }: { id: string }) {
     const formRef = useRef<HTMLFormElement>(null);
     const [title, setTitle] = useState<string>("");
@@ -27,6 +32,7 @@ export default function EditBook({ id }: { id: string }) {
     const [totalPage, setTotalPage] = useState<number>(0);
     const [category, setCategory] = useState<string>("");
     const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
     const router = useRouter();
 
     const editBook = async (e: FormEvent) => {
@@ -77,6 +83,16 @@ export default function EditBook({ id }: { id: string }) {
 
     useEffect(() => {
         setLoading(true);
+
+        axios.get('/api/categories')
+        .then((res) => {
+            setCategories(res.data)
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+
         axios.get(`/api/book/${router.query.id}`)
         .then(response => {
             setTitle(response.data.title);
@@ -216,8 +232,9 @@ export default function EditBook({ id }: { id: string }) {
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
                 <option value="" selected disabled>Select Category</option>
-                <option value="1">Category 1</option>
-                <option value="2">Category 2</option>
+                {categories.map((category) => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
               </select>
             </div>
           </div>
