@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface Book {
@@ -19,8 +20,17 @@ interface Book {
 }
 
 export default function Books() {
-  const [books, setBooks] = useState<Book[]>([]); // Specify the type as Book[]
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  function editBook(id : number) {
+    console.log(id);
+  }
+
+  function deleteBook (id : number) {
+    console.log(id);
+  }
 
   useEffect(() => {
     axios.get("/api/books")
@@ -40,6 +50,8 @@ export default function Books() {
       {loading ? (
         <p>Loading...</p>
       ) : (
+        <div>
+          <button onClick={() => router.push('/book')}>Add Book</button>
         <table className="table-auto">
           <thead>
             <tr>
@@ -64,13 +76,14 @@ export default function Books() {
                 <td>{book.thickness}</td>
                 <td>{book.category.name}</td>
                 <td>
-                    <button>Edit</button>
-                    <button>Add</button>
+                    <button onClick={() => editBook(book.id)}>Edit</button>
+                    <button onClick={() => deleteBook(book.id)}>Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );
