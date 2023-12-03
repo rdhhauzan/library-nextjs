@@ -49,17 +49,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { id } = req.query;
 
-        const data = await prisma.book.findFirst({
-            include: {
-                category: true,
-            },
+        const data = await prisma.category.findFirst({
             where: {
                 id: Number(id),
             },
         });
 
         if (!data) {
-            return res.status(404).json({ error: "Book not found" });
+            return res.status(404).json({ error: "Category not found" });
         }
 
         res.status(200).json(data);
