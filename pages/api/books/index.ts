@@ -29,15 +29,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             return res.status(400).json({ error: "Release year can only between 1980 and 2021" });
         }
 
-        const nextId = await prisma.book.findFirst({
-            orderBy: {
-                id: "asc"
-            }
-        })
-
         const createdBook = await prisma.book.create({
             data: {
-                id: (nextId?.id ?? 0) + 1,
                 title,
                 description,
                 release_year,
