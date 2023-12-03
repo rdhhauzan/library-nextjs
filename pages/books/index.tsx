@@ -29,7 +29,7 @@ export default function Books() {
     router.push(`/book/${id}`);
   }
 
-  function deleteBook (id : number) {
+  function deleteBook (id : number) 
     axios.delete(`/api/book/${id}`)
     .then((res) => {
       console.log(res);
