@@ -23,6 +23,14 @@ interface Book {
 export default function Books() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    title: "",
+    minYear: "",
+    maxYear: "",
+    minPage: "",
+    maxPage: "",
+    sortByTitle: "",
+  });
   const router = useRouter();
 
   function editBook(id : number) {
@@ -60,6 +68,32 @@ export default function Books() {
     })
   }
 
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters({
+      ...filters,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const applyFilters = () => {
+    setLoading(true);
+
+    // Fetch books with filters
+    axios
+      .get("/api/books", {
+        params: filters,
+      })
+      .then((response) => {
+        setBooks(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     axios.get("/api/books")
       .then(response => {
@@ -75,42 +109,88 @@ export default function Books() {
   return (
     <div className="container">
       <p>Show Books</p>
+      <button onClick={() => router.push('/book')}>Add Book</button>
+      <br />
+      <input
+          type="text"
+          placeholder="Title"
+          name="title"
+          value={filters.title}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Min Year"
+          name="minYear"
+          value={filters.minYear}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Max Year"
+          name="maxYear"
+          value={filters.maxYear}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Min Page"
+          name="minPage"
+          value={filters.minPage}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Max Page"
+          name="maxPage"
+          value={filters.maxPage}
+          onChange={handleFilterChange}
+        />
+        <select
+          name="sortByTitle"
+          value={filters.sortByTitle}
+          onChange={handleFilterChange}
+        >
+          <option value="" selected disabled>Sort By Title</option>
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+        <button onClick={applyFilters}>Apply Filters</button>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div>
-          <button onClick={() => router.push('/book')}>Add Book</button>
-        <table className="table-auto">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Image</th>
-              <th>Description</th>
-              <th>Release Year</th>
-              <th>Total Page</th>
-              <th>Thickness</th>
-              <th>Category</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {books.map(book => (
-              <tr key={book.id}>
-                <td>{book.title}</td>
-                <td><img src={book.image_url}/></td>
-                <td>{book.description}</td>
-                <td>{book.release_year}</td>
-                <td>{book.total_page}</td>
-                <td>{book.thickness}</td>
-                <td>{book.category.name}</td>
-                <td>
-                    <button onClick={() => editBook(book.id)}>Edit</button>
-                    <button onClick={() => deleteBook(book.id)}>Delete</button>
-                </td>
+          <table className="table-auto">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Release Year</th>
+                <th>Total Page</th>
+                <th>Thickness</th>
+                <th>Category</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {books.map(book => (
+                <tr key={book.id}>
+                  <td>{book.title}</td>
+                  <td><img src={book.image_url}/></td>
+                  <td>{book.description}</td>
+                  <td>{book.release_year}</td>
+                  <td>{book.total_page}</td>
+                  <td>{book.thickness}</td>
+                  <td>{book.category.name}</td>
+                  <td>
+                      <button onClick={() => editBook(book.id)}>Edit</button>
+                      <button onClick={() => deleteBook(book.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
