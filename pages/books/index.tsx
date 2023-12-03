@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 interface Book {
   id: number;
@@ -29,7 +30,34 @@ export default function Books() {
   }
 
   function deleteBook (id : number) {
-    console.log(id);
+    axios.delete(`/api/book/${id}`)
+    .then((res) => {
+      console.log(res);
+      
+      Swal.fire({
+        title: "Success",
+        text: "Book successfully deleted",
+        icon: "success"
+      });
+
+      axios.get("/api/books")
+        .then(response => {
+          setBooks(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error(error);
+          setLoading(false);
+        });
+
+    })
+    .catch((err) => {
+      Swal.fire({
+        title: "Error",
+        text: err.response.data.error,
+        icon: "error"
+      });
+    })
   }
 
   useEffect(() => {
