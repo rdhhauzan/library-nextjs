@@ -16,21 +16,21 @@ export default function Categories() {
   const router = useRouter();
 
   function editBook(id : number) {
-    router.push(`/book/${id}`);
+    router.push(`/category/${id}`);
   }
 
-  function deleteBook (id : number) {
-    axios.delete(`/api/book/${id}`)
+  function deleteCategory (id : number) {
+    axios.delete(`/api/category/${id}`)
     .then((res) => {
       console.log(res);
       
       Swal.fire({
         title: "Success",
-        text: "Book successfully deleted",
+        text: "Category successfully deleted",
         icon: "success"
       });
 
-      axios.get("/api/books")
+      axios.get("/api/categories")
         .then(response => {
           setCategories(response.data);
           setLoading(false);
@@ -69,7 +69,7 @@ export default function Categories() {
         <p>Loading...</p>
       ) : (
         <div>
-          <button onClick={() => router.push('/book')}>Add Category</button>
+          <button onClick={() => router.push('/category')}>Add Category</button>
         <table className="table-auto">
           <thead>
             <tr>
@@ -84,7 +84,7 @@ export default function Categories() {
                 <td>
                     <button onClick={() => editBook(category.id)}>Show Books with this category</button>
                     <button onClick={() => editBook(category.id)}>Edit</button>
-                    <button onClick={() => deleteBook(category.id)}>Delete</button>
+                    <button onClick={() => deleteCategory(category.id)}>Delete</button>
                 </td>
               </tr>
             ))}
