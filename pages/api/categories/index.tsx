@@ -15,26 +15,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else if (req.method === "POST") {
     try {
-        const { name } = req.body;
-
-        if (!name) {
-            return res.status(400).json({ error: "All fields are required" });
-        }
-
-        const nextId = await prisma.category.findFirst({
-            orderBy: {
-                id: "asc"
-            }
-        })
-
-        const createdCategory = await prisma.category.create({
-            data: {
-                id: (nextId?.id ?? 0) + 1,
-                name
-            },
-        });
-
-        res.status(201).json(createdCategory);
+      const { name } = req.body;
+    
+      if (!name) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+    
+      const createdCategory = await prisma.category.create({
+        data: {
+          name,
+        },
+      });
+    
+      res.status(201).json(createdCategory);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });
