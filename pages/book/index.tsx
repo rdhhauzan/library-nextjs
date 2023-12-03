@@ -2,6 +2,7 @@ import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
+import "../../app/globals.css";
 
 interface FormValues {
   title: string;
@@ -95,6 +96,7 @@ export default function AddBook() {
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => router.push('/books')}>Back to books lists</button>
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Add a new book</h2>
       </div>
 

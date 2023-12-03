@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "../../app/globals.css";
 
-
 interface Book {
   id: number;
   title: string;

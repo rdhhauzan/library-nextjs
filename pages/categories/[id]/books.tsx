@@ -2,6 +2,7 @@ import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
+import "../../../app/globals.css";
 
 interface ApiResponse {
   message: string;
