@@ -33,6 +33,14 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [category, setCategory] = useState<CategoryWithBooks | null>(null);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    title: "",
+    minYear: "",
+    maxYear: "",
+    minPage: "",
+    maxPage: "",
+    sortByTitle: "",
+  });
   const router = useRouter();
 
   function editBook(id : number) {
@@ -71,6 +79,31 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
     })
   }
 
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters({
+      ...filters,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const applyFilters = () => {
+    setLoading(true);
+
+    axios
+      .get(`/api/categories/${id}/books`, {
+        params: filters,
+      })
+      .then((response) => {
+        setCategory(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     setLoading(true);
     axios.get(`/api/categories/${id}/books`)
@@ -94,6 +127,52 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
       <p>Show Books with category {category.name}</p>
       <div>
         <button onClick={() => router.push('/category')}>Add Category</button>
+        <br />
+        <input
+          type="text"
+          placeholder="Title"
+          name="title"
+          value={filters.title}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Min Year"
+          name="minYear"
+          value={filters.minYear}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Max Year"
+          name="maxYear"
+          value={filters.maxYear}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Min Page"
+          name="minPage"
+          value={filters.minPage}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="number"
+          placeholder="Max Page"
+          name="maxPage"
+          value={filters.maxPage}
+          onChange={handleFilterChange}
+        />
+        <select
+          name="sortByTitle"
+          value={filters.sortByTitle}
+          onChange={handleFilterChange}
+        >
+          <option value="" selected disabled>Sort By Title</option>
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+        <button onClick={applyFilters}>Apply Filters</button>
         <table className="table-auto">
           <thead>
             <tr>

@@ -78,7 +78,6 @@ export default function Books() {
   const applyFilters = () => {
     setLoading(true);
 
-    // Fetch books with filters
     axios
       .get("/api/books", {
         params: filters,
