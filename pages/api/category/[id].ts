@@ -8,39 +8,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const query = req.query
         const { id } = query
-        const { title, description, image, release_year, price, total_page, category } = req.body;
+        const { name } = req.body;
 
-        if (!title || !description || !image || !release_year || !price || !total_page || !category) {
+        if (!name) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
-        if (release_year < 1980 || release_year > 2021) {
-            return res.status(400).json({ error: "Release year can only between 1980 and 2021" });
-        }
-
-        const nextId = await prisma.book.findFirst({
-            orderBy: {
-                id: "asc"
-            }
-        })
-
-        const createdBook = await prisma.book.update({
+        const createdCategory = await prisma.category.update({
             where: {
                 id: Number(id)
             },
             data: {
-                title,
-                description,
-                release_year,
-                price,
-                image_url: image,
-                total_page,
-                category_id: Number(category),
-                thickness: total_page <= 100 ? "Tipis" : total_page <= 200 ? "Sedang" : "Tebal",
+                name
             },
         });
 
-        res.status(201).json(createdBook);
+        res.status(201).json(createdCategory);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });

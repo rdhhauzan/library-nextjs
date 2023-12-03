@@ -19,7 +19,7 @@ export default function EditCategory({ id }: { id: string }) {
 
     const editCategory = async (e: FormEvent) => {
         Swal.fire({
-            title: "Updating Book...",
+            title: "Updating Category...",
             allowOutsideClick: false,
             allowEscapeKey: false,
             didOpen: () => {

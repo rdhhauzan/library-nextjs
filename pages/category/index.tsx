@@ -11,7 +11,7 @@ interface ApiResponse {
   message: string;
 }
 
-export default function AddBook() {
+export default function AddCategory() {
   const formRef = useRef<HTMLFormElement>(null);
   const [name, setName] = useState<string>("");
   const [loading, setLoading] = useState(false);
