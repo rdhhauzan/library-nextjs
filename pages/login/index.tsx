@@ -1,6 +1,7 @@
 import { useState, useRef, FormEvent } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useRouter } from "next/router";
 
 interface FormValues {
   username: string;
@@ -9,17 +10,20 @@ interface FormValues {
 
 interface ApiResponse {
   message: String;
+  access_token: any;
+  user_id: any;
 }
 
-export default function Register() {
+export default function Login() {
   const formRef = useRef<HTMLFormElement>(null);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter()
 
-  const register = async (e: FormEvent) => {
+  const login = async (e: FormEvent) => {
     Swal.fire({
-      title: "Creating users...",
+      title: "Logging...",
       allowOutsideClick: false,
       allowEscapeKey: false,
       didOpen: () => {
@@ -37,17 +41,20 @@ export default function Register() {
 
     console.log(formValues);
 
-    axios.post<ApiResponse>("/api/register", formValues)
+    axios.post<ApiResponse>("/api/login", formValues)
       .then(response => {
+        localStorage.setItem("access_token", response.data.access_token);
+        localStorage.setItem("user_id", response.data.user_id);
         Swal.fire({
           title: "Success",
-          text: "User created successfully, Please login",
+          text: "Login success, redirect you to dashboard...",
           icon: "success"
         });
+        router.push('/books');
       })
       .catch(error => {
         Swal.fire({
-          title: "Register failed",
+          title: "Login failed",
           text: error.response.data.message,
           icon: "error"
         });
@@ -103,9 +110,9 @@ export default function Register() {
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={register}
+              onClick={login}
             >
-              Sign up
+              Sign in
             </button>
           </div>
         </form>
