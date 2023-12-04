@@ -35,7 +35,7 @@ npx prisma migrate dev
 
 4. Run NextJS
 ```cmd
-npx run dev
+npm run dev
 ```
 
 ## API Routes
