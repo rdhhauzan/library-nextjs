@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../app/globals.css";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface FormValues {
   username: string;
@@ -42,27 +44,10 @@ export default function Login() {
 
     console.log(formValues);
 
-    axios.post<ApiResponse>("/api/login", formValues)
-      .then(response => {
-        localStorage.setItem("access_token", response.data.access_token);
-        localStorage.setItem("user_id", response.data.user_id);
-        Swal.fire({
-          title: "Success",
-          text: "Login success, redirect you to dashboard...",
-          icon: "success"
-        });
-        router.push('/books');
-      })
-      .catch(error => {
-        Swal.fire({
-          title: "Login failed",
-          text: error.response.data.message,
-          icon: "error"
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await store.loginUser(formValues, () => {
+      router.push('/books')
+      Swal.close()
+    })
   };
 
   useEffect(() => {

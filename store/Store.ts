@@ -30,6 +30,12 @@ interface ApiResponse {
     message: string;
 }
 
+interface LoginApiResponse {
+  message: String;
+  access_token: any;
+  user_id: any;
+}
+
 interface BookFormValues {
     title: string;
     description: string;
@@ -273,7 +279,26 @@ class Store {
     } catch (error) {
       Swal.fire({
         title: "Register failed",
-        text: error.response.data.error,
+        text: error.response.data.message,
+        icon: "error"
+      });
+    }
+  }
+
+  async loginUser(formValues: AuthFormValues, onSuccess: () => void) {
+    try {
+      const response = await axios.post<LoginApiResponse>('/api/login', formValues);
+      runInAction(() => {
+        localStorage.setItem('access_token', response.data.access_token);
+        localStorage.setItem('user_id', response.data.user_id);
+        onSuccess();
+      });
+    } catch (error) {
+      console.log(error);
+      
+      Swal.fire({
+        title: "Login failed",
+        text: error.response.data.message,
         icon: "error"
       });
     }
