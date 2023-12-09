@@ -7,26 +7,7 @@ import Navbar from "@/components/Navbar";
 import store from "@/store/Store";
 import { observer } from "mobx-react";
 
-// interface Book {
-//   id: number;
-//   title: string;
-//   description: string;
-//   image_url : string;
-//   release_year: number;
-//   price : string;
-//   total_page : number;
-//   thickness : string;
-//   createdAt : string;
-//   updatedAt : string;
-//   category_id : string;
-//   category: {
-//     name: string;
-//   };
-// }
-
 const Books: React.FC = () => {
-  // const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     title: "",
     minYear: "",
@@ -42,26 +23,7 @@ const Books: React.FC = () => {
   }
 
   function deleteBook (id : number) {
-    axios.delete(`/api/book/${id}`)
-    .then((res) => {
-      console.log(res);
-      
-      Swal.fire({
-        title: "Success",
-        text: "Book successfully deleted",
-        icon: "success"
-      });
-
-      store.fetchBooks();
-
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: err.response.data.error,
-        icon: "error"
-      });
-    })
+    store.deleteBook(id)
   }
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,8 +34,6 @@ const Books: React.FC = () => {
   };
 
   const applyFilters = () => {
-    setLoading(true);
-
     store.fetchBooks(filters)
   };
 

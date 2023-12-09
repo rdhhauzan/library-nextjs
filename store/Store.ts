@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
-
+import Swal from 'sweetalert2';
 interface Book {
   id: number;
   title: string;
@@ -51,6 +51,26 @@ class BookStore {
       console.error(error);
       runInAction(() => {
         this.loading = false;
+      });
+    }
+  }
+
+  async deleteBook(id: number) {
+    try {
+      await axios.delete(`/api/book/${id}`);
+      runInAction(() => {
+        this.books = this.books.filter(book => book.id !== id);
+      });
+      Swal.fire({
+        title: "Success",
+        text: "Book successfully deleted",
+        icon: "success"
+      });
+    } catch (err) {
+      Swal.fire({
+        title: "Error",
+        text: err.response.data.error,
+        icon: "error"
       });
     }
   }
