@@ -27,7 +27,6 @@ interface Category {
 
 export default function EditBook({ id }: { id: string }) {
     const formRef = useRef<HTMLFormElement>(null);
-
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [image, setImage] = useState<string>("");
@@ -38,7 +37,6 @@ export default function EditBook({ id }: { id: string }) {
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
     const router = useRouter();
-    const [bookId, setBookId] = useState(router.query.id);
 
     const editBook = async (e: FormEvent) => {
         Swal.fire({
@@ -63,27 +61,7 @@ export default function EditBook({ id }: { id: string }) {
             category,
         };
 
-        axios.patch<ApiResponse>(`/api/book/${id}`, formValues)
-        .then(response => {
-            Swal.fire({
-                title: "Success",
-                text: response.data.message,
-                icon: "success" 
-            });
-            router.push('/books');
-        })
-        .catch(error => {
-            console.log(error);
-            
-            Swal.fire({
-                title: "Adding Book failed",
-                text: error.response.data.error,
-                icon: "error"
-            });
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+        await store.editBook(Number(id), formValues, () => router.push('/books'))
     };
 
     useEffect(() => {
@@ -104,15 +82,17 @@ export default function EditBook({ id }: { id: string }) {
 
         store.fetchBookById(Number(router.query.id), () => {
           const { selectedBook } = store;
-          setTitle(selectedBook.title);
-          setDescription(selectedBook.description);
-          setImage(selectedBook.image_url);
-          setReleaseYear(selectedBook.release_year);
-          setPrice(selectedBook.price);
-          setTotalPage(selectedBook.total_page);
-          setCategory(selectedBook.category_id);
-          setLoading(false)
-        })
+          if (selectedBook) {
+            setTitle(selectedBook.title);
+            setDescription(selectedBook.description);
+            setImage(selectedBook.image_url);
+            setReleaseYear(selectedBook.release_year);
+            setPrice(selectedBook.price);
+            setTotalPage(selectedBook.total_page);
+            setCategory(selectedBook.category_id);
+          }
+          setLoading(false);
+        });
     }, []);
 
     if (loading) {

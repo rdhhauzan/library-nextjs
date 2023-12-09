@@ -20,6 +20,20 @@ interface Book {
   };
 }
 
+interface ApiResponse {
+    message: string;
+}
+
+interface BookFormValues {
+    title: string;
+    description: string;
+    image: string;
+    release_year: number;
+    price: string;
+    total_page: number;
+    category: string;
+  }
+
 interface Filters {
   title?: string;
   minYear?: string;
@@ -109,6 +123,27 @@ class BookStore {
       });
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async editBook(id: number, formValues: BookFormValues, onSuccess: () => void) {
+    try {
+      const response = await axios.patch<ApiResponse>(`/api/book/${id}`, formValues);
+      runInAction(() => {
+        Swal.fire({
+            title: "Success",
+            text: response.data.message,
+            icon: "success" 
+        });
+        
+        onSuccess();
+      });
+    } catch (error) {
+        Swal.fire({
+            title: "Adding Book failed",
+            text: error.response.data.error,
+            icon: "error"
+        });
     }
   }
 }
