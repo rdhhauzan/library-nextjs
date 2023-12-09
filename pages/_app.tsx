@@ -3,6 +3,8 @@ import "../app/globals.css";
 import { AppProps } from "next/app";
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { Provider } from "mobx-react";
+import store from "@/store/Store";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -19,10 +21,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []); // Pass an empty dependency array to run the effect only once on mount
 
   return (
-    <>
-      <Navbar />
-      <Component {...pageProps} />
-    </>
+    <Provider store={store}>
+      <>
+        <Navbar />
+        <Component {...pageProps} />
+      </>
+    </Provider>
   );
 }
 
