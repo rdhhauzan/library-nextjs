@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../app/globals.css";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface FormValues {
   title: string;
@@ -25,6 +27,7 @@ interface Category {
 
 export default function EditBook({ id }: { id: string }) {
     const formRef = useRef<HTMLFormElement>(null);
+
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [image, setImage] = useState<string>("");
@@ -35,6 +38,7 @@ export default function EditBook({ id }: { id: string }) {
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
     const router = useRouter();
+    const [bookId, setBookId] = useState(router.query.id);
 
     const editBook = async (e: FormEvent) => {
         Swal.fire({
@@ -98,23 +102,17 @@ export default function EditBook({ id }: { id: string }) {
             console.log(err);
         })
 
-        axios.get(`/api/book/${router.query.id}`)
-        .then(response => {
-            setTitle(response.data.title);
-            setDescription(response.data.description);
-            setImage(response.data.image_url);
-            setReleaseYear(response.data.release_year);
-            setPrice(response.data.price);
-            setTotalPage(response.data.total_page);
-            setCategory(response.data.category_id);
+        store.fetchBookById(Number(router.query.id), () => {
+          const { selectedBook } = store;
+          setTitle(selectedBook.title);
+          setDescription(selectedBook.description);
+          setImage(selectedBook.image_url);
+          setReleaseYear(selectedBook.release_year);
+          setPrice(selectedBook.price);
+          setTotalPage(selectedBook.total_page);
+          setCategory(selectedBook.category_id);
+          setLoading(false)
         })
-        .catch(error => {
-            console.error(error);
-        })
-        .finally(() => {
-            setLoading(false);
-        })
-
     }, []);
 
     if (loading) {

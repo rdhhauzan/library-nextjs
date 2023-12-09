@@ -32,6 +32,7 @@ interface Filters {
 class BookStore {
   books: Book[] = [];
   loading: boolean = true;
+  selectedBook: Book | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -95,6 +96,19 @@ class BookStore {
             text: error.response.data.error,
             icon: "error"
         });
+    }
+  }
+
+  async fetchBookById(id: number, onSuccess: () => void) {
+    this.selectedBook = null;
+    try {
+      const response = await axios.get(`/api/book/${id}`);
+      runInAction(() => {
+        this.selectedBook = response.data;
+        onSuccess()
+      });
+    } catch (error) {
+      console.error(error);
     }
   }
 }
