@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { useRouter } from "next/router";
 
 interface Book {
   id: number;
@@ -18,6 +17,13 @@ interface Book {
   category: {
     name: string;
   };
+}
+
+interface Category {
+  id: number;
+  name: string;
+  createdAt : string;
+  updatedAt : string;
 }
 
 interface ApiResponse {
@@ -43,10 +49,12 @@ interface Filters {
   sortByTitle?: string;
 }
 
-class BookStore {
+class Store {
   books: Book[] = [];
   loading: boolean = true;
   selectedBook: Book | null = null;
+
+  categories: Book[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -146,7 +154,22 @@ class BookStore {
         });
     }
   }
+
+  async fetchCategories() {
+    try {
+      const response = await axios.get("/api/categories");
+      runInAction(() => {
+        this.categories = response.data;
+        this.loading = false;
+      });
+    } catch (error) {
+      console.error(error);
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  }
 }
 
-const store = new BookStore();
+const store = new Store();
 export default store;

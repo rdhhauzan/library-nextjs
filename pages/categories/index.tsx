@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "../../app/globals.css";
-
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface Category {
   id: number;
@@ -12,7 +13,7 @@ interface Category {
   updatedAt : string;
 }
 
-export default function Categories() {
+const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -57,21 +58,13 @@ export default function Categories() {
         router.push('/login')
     }
     
-    axios.get("/api/categories")
-      .then(response => {
-        setCategories(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error(error);
-        setLoading(false);
-      });
+    store.fetchCategories();
   }, []);
 
   return (
     <div className="container mx-auto">
       <h1 className="my-5 text-center" style={{fontSize: "30px"}}>Categories Lists</h1>
-      {loading ? (
+      {store.loading ? (
         <p>Loading...</p>
       ) : (
         <div>
@@ -84,7 +77,7 @@ export default function Categories() {
             </tr>
           </thead>
           <tbody>
-            {categories.map(category => (
+            {store.categories.map(category => (
               <tr key={category.id} className="hover:bg-gray-50 focus:bg-gray-300">
                 <td className="border px-8 py-4">{category.name}</td>
                 <td className="border px-8 py-4">
@@ -101,3 +94,5 @@ export default function Categories() {
     </div>
   );
 }
+
+export default observer(Categories);
