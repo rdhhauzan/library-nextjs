@@ -169,6 +169,29 @@ class Store {
       });
     }
   }
+
+  async deleteCategory(id: number) {
+    this.loading = true;
+    try {
+      await axios.delete(`/api/category/${id}`)
+      runInAction(() => {
+        this.categories = this.categories.filter(category => category.id !== id);
+        this.loading = false;
+      });
+      Swal.fire({
+        title: "Success",
+        text: "Category successfully deleted",
+        icon: "success"
+      });
+    } catch (err) {
+      this.loading = false;
+      Swal.fire({
+        title: "Error",
+        text: err.response.data.error,
+        icon: "error"
+      });
+    }
+  }
 }
 
 const store = new Store();

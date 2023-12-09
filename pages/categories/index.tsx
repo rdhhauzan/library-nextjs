@@ -22,35 +22,8 @@ const Categories: React.FC = () => {
     router.push(`/category/${id}`);
   }
 
-  function deleteCategory (id : number) {
-    axios.delete(`/api/category/${id}`)
-    .then((res) => {
-      console.log(res);
-      
-      Swal.fire({
-        title: "Success",
-        text: "Category successfully deleted",
-        icon: "success"
-      });
-
-      axios.get("/api/categories")
-        .then(response => {
-          setCategories(response.data);
-          setLoading(false);
-        })
-        .catch(error => {
-          console.error(error);
-          setLoading(false);
-        });
-
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: err.response.data.error,
-        icon: "error"
-      });
-    })
+  async function deleteCategory (id : number) {
+    await store.deleteCategory(id)
   }
 
   useEffect(() => {
