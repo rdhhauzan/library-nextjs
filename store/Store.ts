@@ -38,7 +38,11 @@ interface BookFormValues {
     price: string;
     total_page: number;
     category: string;
-  }
+}
+
+interface CategoryFormValues {
+  name: string;
+}
 
 interface Filters {
   title?: string;
@@ -225,6 +229,27 @@ class Store {
       });
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async editCategory(id: number, formValues: CategoryFormValues, onSuccess: () => void) {
+    try {
+      const response = await axios.patch<ApiResponse>(`/api/category/${id}`, formValues);
+      runInAction(() => {
+        Swal.fire({
+            title: "Success",
+            text: response.data.message,
+            icon: "success" 
+        });
+        
+        onSuccess();
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Adding Category failed",
+        text: error.response.data.error,
+        icon: "error"
+    });
     }
   }
 }

@@ -37,27 +37,7 @@ export default function EditCategory({ id }: { id: string }) {
             name
         };
 
-        axios.patch<ApiResponse>(`/api/category/${id}`, formValues)
-        .then(response => {
-            Swal.fire({
-                title: "Success",
-                text: response.data.message,
-                icon: "success" 
-            });
-            router.push('/categories');
-        })
-        .catch(error => {
-            console.log(error);
-            
-            Swal.fire({
-                title: "Adding Category failed",
-                text: error.response.data.error,
-                icon: "error"
-            });
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+        await store.editCategory(Number(id), formValues, () => router.push('/categories'))
     };
 
     useEffect(() => {
