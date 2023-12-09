@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useRouter } from "next/router";
+
 interface Book {
   id: number;
   title: string;
@@ -72,6 +74,27 @@ class BookStore {
         text: err.response.data.error,
         icon: "error"
       });
+    }
+  }
+
+  async addBook(bookData: any, onSuccess: () => void) {
+    try {
+      const response = await axios.post('/api/books', bookData);
+      runInAction(() => {
+        this.fetchBooks();
+        onSuccess()
+      });
+      Swal.fire({
+        title: "Success",
+        text: response.data.message,
+        icon: "success"
+      });
+    } catch (error) {
+        Swal.fire({
+            title: "Adding Book failed",
+            text: error.response.data.error,
+            icon: "error"
+        });
     }
   }
 }

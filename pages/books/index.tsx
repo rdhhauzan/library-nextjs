@@ -1,9 +1,6 @@
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 import "../../app/globals.css";
-import Navbar from "@/components/Navbar";
 import store from "@/store/Store";
 import { observer } from "mobx-react";
 

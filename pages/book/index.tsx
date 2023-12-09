@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../app/globals.css";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface FormValues {
   title: string;
@@ -23,7 +25,7 @@ interface Category {
   name: string;
 }
 
-export default function AddBook() {
+const AddBook: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -59,27 +61,7 @@ export default function AddBook() {
       category,
     };
 
-    axios.post<ApiResponse>("/api/books", formValues)
-      .then(response => {
-        Swal.fire({
-          title: "Success",
-          text: response.data.message,
-          icon: "success"
-        });
-        router.push('/books');
-      })
-      .catch(error => {
-        console.log(error);
-        
-        Swal.fire({
-          title: "Adding Book failed",
-          text: error.response.data.error,
-          icon: "error"
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await store.addBook(formValues, () => router.push('/books'));
   };
 
   useEffect(() => {
@@ -233,3 +215,5 @@ export default function AddBook() {
     </div>
   );
 }
+
+export default observer(AddBook);
