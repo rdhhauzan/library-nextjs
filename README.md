@@ -78,3 +78,5 @@ GET /categories/:id/books?title=example&minYear=2000&maxPage=300&sortByTitle=asc
 ```url
 GET /books?title=example&minYear=2000&maxPage=300&sortByTitle=asc
 ```
+## Update 09 December 2023
+Add and use MobX state management
