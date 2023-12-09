@@ -4,26 +4,28 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "../../app/globals.css";
 import Navbar from "@/components/Navbar";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
-interface Book {
-  id: number;
-  title: string;
-  description: string;
-  image_url : string;
-  release_year: number;
-  price : string;
-  total_page : number;
-  thickness : string;
-  createdAt : string;
-  updatedAt : string;
-  category_id : string;
-  category: {
-    name: string;
-  };
-}
+// interface Book {
+//   id: number;
+//   title: string;
+//   description: string;
+//   image_url : string;
+//   release_year: number;
+//   price : string;
+//   total_page : number;
+//   thickness : string;
+//   createdAt : string;
+//   updatedAt : string;
+//   category_id : string;
+//   category: {
+//     name: string;
+//   };
+// }
 
-export default function Books() {
-  const [books, setBooks] = useState<Book[]>([]);
+const Books: React.FC = () => {
+  // const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     title: "",
@@ -50,15 +52,7 @@ export default function Books() {
         icon: "success"
       });
 
-      axios.get("/api/books")
-        .then(response => {
-          setBooks(response.data);
-          setLoading(false);
-        })
-        .catch(error => {
-          console.error(error);
-          setLoading(false);
-        });
+      store.fetchBooks();
 
     })
     .catch((err) => {
@@ -85,7 +79,7 @@ export default function Books() {
         params: filters,
       })
       .then((response) => {
-        setBooks(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -99,16 +93,8 @@ export default function Books() {
     if (!localStorage.getItem('access_token')) {
       router.push('/login')
     }
-    
-    axios.get("/api/books")
-      .then(response => {
-        setBooks(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error(error);
-        setLoading(false);
-      });
+
+    store.fetchBooks();
   }, []);
 
   return (
@@ -161,7 +147,7 @@ export default function Books() {
           <option value="desc">Descending</option>
         </select>
         <button onClick={applyFilters} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">Apply Filters</button>
-      {loading ? (
+      {store.loading ? (
         <p>Loading...</p>
       ) : (
         <div>
@@ -179,7 +165,7 @@ export default function Books() {
               </tr>
             </thead>
             <tbody>
-              {books.map(book => (
+              {store.books.map(book => (
                 <tr key={book.id} className="hover:bg-gray-50 focus:bg-gray-300">
                   <td className="border px-8 py-4">{book.title}</td>
                   <td className="border px-8 py-4"><img src={book.image_url}/></td>
@@ -201,3 +187,5 @@ export default function Books() {
     </div>
   );
 }
+
+export default observer(Books);
