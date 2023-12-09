@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../app/globals.css";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface FormValues {
   name: string;
@@ -35,27 +37,7 @@ export default function AddCategory() {
       name
     };
 
-    axios.post<ApiResponse>("/api/categories", formValues)
-      .then(response => {
-        Swal.fire({
-          title: "Success",
-          text: response.data.message,
-          icon: "success"
-        });
-        router.push('/categories');
-      })
-      .catch(error => {
-        console.log(error);
-        
-        Swal.fire({
-          title: "Adding Category failed",
-          text: error.response.data.error,
-          icon: "error"
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await store.addCategory(formValues, () => router.push('/categories'));
   };
 
   useEffect(() => {

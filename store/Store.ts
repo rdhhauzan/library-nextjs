@@ -192,6 +192,27 @@ class Store {
       });
     }
   }
+
+  async addCategory(categoryData: any, onSuccess: () => void) {
+    try {
+      const response = await axios.post('/api/categories', categoryData);
+      runInAction(() => {
+        this.fetchCategories();
+        onSuccess()
+      });
+      Swal.fire({
+        title: "Success",
+        text: response.data.message,
+        icon: "success"
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Adding Category failed",
+        text: error.response.data.error,
+        icon: "error"
+      });
+    }
+  }
 }
 
 const store = new Store();
