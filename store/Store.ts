@@ -55,6 +55,7 @@ class Store {
   selectedBook: Book | null = null;
 
   categories: Book[] = [];
+  selectedCategory: Category | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -211,6 +212,19 @@ class Store {
         text: error.response.data.error,
         icon: "error"
       });
+    }
+  }
+
+  async fetchCategoryById(id: number, onSuccess: () => void) {
+    this.selectedCategory = null;
+    try {
+      const response = await axios.get(`/api/category/${id}`);
+      runInAction(() => {
+        this.selectedCategory = response.data;
+        onSuccess()
+      });
+    } catch (error) {
+      console.error(error);
     }
   }
 }

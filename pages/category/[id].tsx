@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../app/globals.css";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface FormValues {
     name: string;
@@ -64,15 +66,14 @@ export default function EditCategory({ id }: { id: string }) {
         }
         
         setLoading(true);
-        axios.get(`/api/category/${router.query.id}`)
-        .then(response => {
-            setName(response.data.name)
-        })
-        .catch(error => {
-            console.error(error);
-        })
-        .finally(() => {
-            setLoading(false);
+
+        store.fetchCategoryById(Number(router.query.id), () => {
+          const { selectedCategory } = store
+          if (selectedCategory) {
+            setName(selectedCategory.name)            
+          }
+
+          setLoading(false);
         })
 
     }, []);
