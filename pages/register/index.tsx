@@ -2,14 +2,12 @@ import { useState, useRef, FormEvent, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface FormValues {
   username: string;
   password: string;
-}
-
-interface ApiResponse {
-  message: String;
 }
 
 export default function Register() {
@@ -37,26 +35,7 @@ export default function Register() {
       password,
     };
 
-    console.log(formValues);
-
-    axios.post<ApiResponse>("/api/register", formValues)
-      .then(response => {
-        Swal.fire({
-          title: "Success",
-          text: "User created successfully, Please login",
-          icon: "success"
-        });
-      })
-      .catch(error => {
-        Swal.fire({
-          title: "Register failed",
-          text: error.response.data.message,
-          icon: "error"
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await store.registerUser(formValues, () => router.push('/login'))
   };
 
   useEffect(() => {

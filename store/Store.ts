@@ -44,6 +44,11 @@ interface CategoryFormValues {
   name: string;
 }
 
+interface AuthFormValues {
+  username: string;
+  password: string;
+}
+
 interface Filters {
   title?: string;
   minYear?: string;
@@ -250,6 +255,27 @@ class Store {
         text: error.response.data.error,
         icon: "error"
     });
+    }
+  }
+
+  async registerUser(formValues: AuthFormValues, onSuccess: () => void) {
+    try {
+      const response = await axios.post<ApiResponse>('/api/register', formValues);
+      runInAction(() => {
+        Swal.fire({
+            title: "Success",
+            text: "User created successfully, Please login",
+            icon: "success" 
+        });
+        
+        onSuccess();
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Register failed",
+        text: error.response.data.error,
+        icon: "error"
+      });
     }
   }
 }
