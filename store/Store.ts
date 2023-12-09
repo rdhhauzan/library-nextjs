@@ -26,6 +26,28 @@ interface Category {
   updatedAt : string;
 }
 
+interface BookWithCategory {
+  id: number;
+  title: string;
+  description: string;
+  image_url: string;
+  release_year: number;
+  price: string;
+  total_page: number;
+  thickness: string;
+  createdAt: string;
+  updatedAt: string;
+  category_id: number;
+}
+
+interface CategoryWithBooks {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  books: BookWithCategory[];
+}
+
 interface ApiResponse {
     message: string;
 }
@@ -72,6 +94,8 @@ class Store {
   categories: Book[] = [];
   selectedCategory: Category | null = null;
 
+  BooksByCategory: CategoryWithBooks[] = [];
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -96,11 +120,12 @@ class Store {
     }
   }
 
-  async deleteBook(id: number) {
+  async deleteBook(id: number, onSuccess: () => void) {
     try {
       await axios.delete(`/api/book/${id}`);
       runInAction(() => {
         this.books = this.books.filter(book => book.id !== id);
+        onSuccess()
       });
       Swal.fire({
         title: "Success",
@@ -300,6 +325,26 @@ class Store {
         title: "Login failed",
         text: error.response.data.message,
         icon: "error"
+      });
+    }
+  }
+
+  async fetchBooksByCategory(id: number, filters?: Filters) {
+    try {
+      let url = `/api/categories/${id}/books`;
+      if (filters) {
+        url += '?' + new URLSearchParams(filters).toString();
+      }
+
+      const response = await axios.get(url);
+      runInAction(() => {
+        this.BooksByCategory = response.data;
+        this.loading = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => {
+        this.loading = false;
       });
     }
   }

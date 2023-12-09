@@ -20,7 +20,9 @@ const Books: React.FC = () => {
   }
 
   function deleteBook (id : number) {
-    store.deleteBook(id)
+    store.deleteBook(id, () => {
+      return true;
+    })
   }
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {

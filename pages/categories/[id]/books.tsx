@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "next/router";
 import "../../../app/globals.css";
+import store from "@/store/Store";
+import { observer } from "mobx-react";
 
 interface Book {
   id: number;
@@ -26,7 +28,7 @@ interface CategoryWithBooks {
   books: Book[];
 }
 
-export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
+const ShowBooksBasedOnCategory: React.FC = ({ id }: { id: string }) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [category, setCategory] = useState<CategoryWithBooks | null>(null);
   const [loading, setLoading] = useState(false);
@@ -45,35 +47,7 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
   }
 
   function deleteBook (id : number) {
-    axios.delete(`/api/book/${id}`)
-    .then((res) => {
-      console.log(res);
-      
-      Swal.fire({
-        title: "Success",
-        text: "Book successfully deleted",
-        icon: "success"
-      });
-
-      axios.get(`/api/categories/${id}/books`)
-        .then(response => {
-            setCategory(response.data);
-        })
-        .catch(error => {
-            console.error(error);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
-
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: err.response.data.error,
-        icon: "error"
-      });
-    })
+    store.deleteBook(id, () => store.fetchBooksByCategory(Number(router.query.id)))
   }
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,19 +60,7 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
   const applyFilters = () => {
     setLoading(true);
 
-    axios
-      .get(`/api/categories/${id}/books`, {
-        params: filters,
-      })
-      .then((response) => {
-        setCategory(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    store.fetchBooksByCategory(Number(id), filters)
   };
 
   useEffect(() => {
@@ -107,25 +69,16 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
     }
     
     setLoading(true);
-    axios.get(`/api/categories/${id}/books`)
-      .then(response => {
-        setCategory(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    store.fetchBooksByCategory(Number(id))
   }, []);
 
-  if (loading || !category) {
+  if (store.loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container mx-auto">
-      <h1 className="my-5 text-center" style={{fontSize: "30px"}}>Show Books with category {category.name}</h1>
+      <h1 className="my-5 text-center" style={{fontSize: "30px"}}>Show Books with category {store.BooksByCategory.name}</h1>
       <div>
         <button onClick={() => router.push('/category')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-3">Add Category</button>
         <br />
@@ -188,7 +141,7 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
             </tr>
           </thead>
           <tbody>
-            {category.books.map(book => (
+            {store?.BooksByCategory?.books?.map(book => (
               <tr key={book.id} className="hover:bg-gray-50 focus:bg-gray-300">
                 <td className="border px-8 py-4">{book.title}</td>
                 <td className="border px-8 py-4"><img src={book.image_url} alt={book.title} /></td>
@@ -196,7 +149,7 @@ export default function ShowBooksBasedOnCategory({ id }: { id: string }) {
                 <td className="border px-8 py-4">{book.release_year}</td>
                 <td className="border px-8 py-4">{book.total_page}</td>
                 <td className="border px-8 py-4">{book.thickness}</td>
-                <td className="border px-8 py-4">{category.name}</td>
+                <td className="border px-8 py-4">{store.BooksByCategory.name}</td>
                 <td className="border px-8 py-4">
                     <button onClick={() => editBook(book.id)} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded m-3">Edit</button>
                     <button onClick={() => deleteBook(book.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-3">Delete</button>
@@ -218,3 +171,5 @@ export async function getServerSideProps(context: any) {
     },
   };
 }
+
+export default observer(ShowBooksBasedOnCategory)
