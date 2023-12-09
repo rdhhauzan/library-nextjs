@@ -74,19 +74,7 @@ const Books: React.FC = () => {
   const applyFilters = () => {
     setLoading(true);
 
-    axios
-      .get("/api/books", {
-        params: filters,
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    store.fetchBooks(filters)
   };
 
   useEffect(() => {

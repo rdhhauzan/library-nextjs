@@ -18,6 +18,15 @@ interface Book {
   };
 }
 
+interface Filters {
+  title?: string;
+  minYear?: string;
+  maxYear?: string;
+  minPage?: string;
+  maxPage?: string;
+  sortByTitle?: string;
+}
+
 class BookStore {
   books: Book[] = [];
   loading: boolean = true;
@@ -26,9 +35,14 @@ class BookStore {
     makeAutoObservable(this);
   }
 
-  async fetchBooks() {
+  async fetchBooks(filters?: Filters) {
     try {
-      const response = await axios.get('/api/books');
+      let url = '/api/books';
+      if (filters) {
+        url += '?' + new URLSearchParams(filters).toString();
+      }
+
+      const response = await axios.get(url);
       runInAction(() => {
         this.books = response.data;
         this.loading = false;
